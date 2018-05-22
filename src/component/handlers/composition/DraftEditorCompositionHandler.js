@@ -44,6 +44,7 @@ const RESOLVE_DELAY = 20;
 let resolved = false;
 let stillComposing = false;
 let textInputData = '';
+let compositionInputData = '';
 
 const DraftEditorCompositionHandler = {
   onBeforeInput: function(editor: DraftEditor, e: SyntheticInputEvent<>): void {
@@ -75,6 +76,7 @@ const DraftEditorCompositionHandler = {
   onCompositionEnd: function(editor: DraftEditor, e: SyntheticEvent<>): void {
     resolved = false;
     stillComposing = false;
+    compositionInputData = e.data;
     setTimeout(() => {
       if (!resolved) {
         DraftEditorCompositionHandler.resolveComposition(editor, e);
@@ -138,8 +140,9 @@ const DraftEditorCompositionHandler = {
     }
 
     resolved = true;
-    const composedChars = textInputData;
+    const composedChars = textInputData || compositionInputData;
     textInputData = '';
+    compositionInputData = '';
 
     const editorState = EditorState.set(editor._latestEditorState, {
       inCompositionMode: false,
